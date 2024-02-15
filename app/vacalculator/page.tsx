@@ -4,195 +4,257 @@
  */
 "use client";
 
-import {
-	SelectValue,
-	SelectTrigger,
-	SelectItem,
-	SelectContent,
-	Select,
-} from "@/components/ui/select";
+import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ResponsiveLine } from "@nivo/line";
 import { Body } from "@/components/component/body";
 import { Badges } from "@/components/component/badges";
-import { SetStateAction, useState } from "react";
+import {
+    SelectValue,
+    SelectTrigger,
+    SelectItem,
+    SelectContent,
+    Select,
+} from "@/components/ui/select";
 
-function Vacalculator() {
-	// State to store the disability percentage
-	const [disabilityPercentage, setDisabilityPercentage] = useState(0);
+const Vacalculator = () => {
+    const [disabilityPercentage, setDisabilityPercentage] = useState(0);
+    const [selectedBodyPart, setSelectedBodyPart] = useState("");
+    const selectRef = useRef<HTMLDivElement>(null);
+    const [selectedValue, setSelectedValue] = useState<string>("Select Body Part");
 
-	const handleButtonClick = (increment: number) => {
-		// Calculate the new disability percentage by incrementing the current value
-		const newPercentage = disabilityPercentage + increment;
+    const handleButtonClick = (increment: number) => {
+        const newPercentage = disabilityPercentage + increment;
+        const clampedPercentage = Math.min(Math.max(newPercentage, 0), 100);
+        setDisabilityPercentage(clampedPercentage);
+    };
 
-		// Ensure the new percentage is within the range of 0% to 100%
-		const clampedPercentage = Math.min(Math.max(newPercentage, 0), 100);
+    const handleSelectChange: FormEventHandler<HTMLButtonElement> = (event) => {
+        const selectedValue = event.currentTarget.value;
+        setSelectedBodyPart(selectedValue);
+        setSelectedValue(selectedValue);
+    };
 
-		// Update Total Disability Rating
-		setDisabilityPercentage(clampedPercentage);
-	};
+    const handleBodyPartClick = (part: string) => {
+        setSelectedBodyPart(part); // Update the selected body part
+        setSelectedValue(part); // Update the selected value for the dropdown
+		console.log(selectedValue)
+    };
 
-	return (
-		<div className="bg-white p-8">
-			<div className="mb-10 text-center text-2xl font-bold uppercase tracking-wide">
-				Trajector
-			</div>
-			<div className="grid grid-cols-3 gap-8">
-				<div className="col-span-2 p-8 border border-gray-200 rounded-lg dark:border-gray-800">
-					<div className="grid grid-cols-2 gap-4">
-						<div className="col-span-1">
-							<h2 className="text-lg font-semibold mb-4">
-								Begin by choosing the areas where you have disabilities
-							</h2>
-							<p className="text-sm mb-8">
-								Choose the specific body part affected by your disability and
-								indicate the percentage of impairment from 0% to 100%.
-							</p>
-							<div className="grid grid-cols-4 gap-4 mb-8">
-								<div className="col-span-1">
-									<Select>
-										<SelectTrigger id="body-part">
-											<SelectValue placeholder="Select Body Part" />
-										</SelectTrigger>
-										<SelectContent position="popper">
-											<SelectItem value="head">Head</SelectItem>
-											<SelectItem value="torso">Torso</SelectItem>
-											<SelectItem value="rightArm">Right Arm</SelectItem>
-											<SelectItem value="leftArm">Left Arm</SelectItem>
-											<SelectItem value="rightLeg">Right Leg</SelectItem>
-											<SelectItem value="leftLeg">Left Leg</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
-								<div className="col-span-3 flex flex-wrap gap-4">
-									<Button className="w-1/5" onClick={() => handleButtonClick(10)}>10%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(20)}>20%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(30)}>30%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(40)}>40%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(50)}>50%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(60)}>60%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(70)}>70%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(80)}>80%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(90)}>90%</Button>
-									<Button className="w-1/5" onClick={() => handleButtonClick(100)}>100%</Button>
-								</div>
-							</div>
-						</div>
-						<div className="col-span-1 flex justify-center items-center">
-							<Body />
-						</div>
-					</div>
-					<div className="flex justify-between items-center">
-						<span className="text-xs font-semibold">Ratings</span>
-						<Badges />
-						<span className="text-xs font-semibold">Step 1</span>
-					</div>
-				</div>
-				<div className="p-8 border border-gray-200 rounded-lg dark:border-gray-800">
-					<div className="mb-8 flex justify-center items-center">
-					</div>
-					<div className="text-center">
-						<h3 className="text-lg font-semibold mb-2">
-							Total Disability Rating
-						</h3>
-						<p className="text-4xl font-bold mb-4">{disabilityPercentage}%</p>
-						<h3 className="text-lg font-semibold mb-2">
-							Total Monthly Compensation
-						</h3>
-						<p className="text-xl font-bold">$ 0</p>
-					</div>
-					<div className="mt-8">
-					</div>
-				</div>
-			</div>
-			<div className="mt-16 mb-8">
-				<h2 className="text-lg font-semibold mb-4">
-					To complete the assessment, fill out the form to proceed with
-					generating your quote.
-				</h2>
-				<p className="text-sm mb-8">
-					Are you sure your VA rating is fair? Let us uncover your potential
-					rating eligibility.
-				</p>
-				<div className="grid grid-cols-2 gap-8">
-					<div className="border-b pb-4">
-						<h3 className="text-sm font-semibold mb-2">
-							Combined Disability Percentage:
-						</h3>
-						<p className="text-lg font-bold">{disabilityPercentage}</p>
-					</div>
-					<div className="border-b pb-4">
-						<h3 className="text-sm font-semibold mb-2">
-							Current Disability Rating:
-						</h3>
-						<p className="text-lg font-bold">0%</p>
-					</div>
-					<div className="border-b pb-4">
-						<h3 className="text-sm font-semibold mb-2">
-							Monthly Payment Amount:
-						</h3>
-						<p className="text-lg font-bold">$0</p>
-					</div>
-					<div className="border-b pb-4">
-						<Select>
-							<SelectTrigger id="children-under-18">
-								<SelectValue placeholder="How many dependent children do you have who are under the age of 18?" />
-							</SelectTrigger>
-							<SelectContent position="popper">
-								<SelectItem value="0">None</SelectItem>
-								<SelectItem value="1">1</SelectItem>
-								<SelectItem value="2">2</SelectItem>
-								<SelectItem value="3">3</SelectItem>
-								<SelectItem value="4">4</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="border-b pb-4">
-						<Select>
-							<SelectTrigger id="children-18-24">
-								<SelectValue placeholder="How many dependent children do you have who are between the ages of 18 and 24?" />
-							</SelectTrigger>
-							<SelectContent position="popper">
-								<SelectItem value="0">None</SelectItem>
-								<SelectItem value="1">1</SelectItem>
-								<SelectItem value="2">2</SelectItem>
-								<SelectItem value="3">3</SelectItem>
-								<SelectItem value="4">4</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="border-b pb-4">
-						<Select>
-							<SelectTrigger id="marital-status">
-								<SelectValue placeholder="What is your marital status?" />
-							</SelectTrigger>
-							<SelectContent position="popper">
-								<SelectItem value="single">Single</SelectItem>
-								<SelectItem value="married">Married</SelectItem>
-								<SelectItem value="divorced">Divorced</SelectItem>
-								<SelectItem value="widowed">Widowed</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="border-b pb-4">
-						<Select>
-							<SelectTrigger id="dependent-parents">
-								<SelectValue placeholder="How many dependent parents do you have?" />
-							</SelectTrigger>
-							<SelectContent position="popper">
-								<SelectItem value="0">None</SelectItem>
-								<SelectItem value="1">1</SelectItem>
-								<SelectItem value="2">2</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
-				</div>
-			</div>
-			<div className="text-center">
-				<Button>Submit</Button>
-			</div>
-		</div>
-	);
+    return (
+        <div className="bg-white p-8">
+            <div className="mb-10 text-center text-2xl font-bold uppercase tracking-wide">
+                Trajector
+            </div>
+            <div className="grid grid-cols-3 gap-8">
+                <div className="col-span-2 p-8 border border-gray-200 rounded-lg dark:border-gray-800">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="col-span-1">
+                            <h2 className="text-lg font-semibold mb-4">
+                                Begin by choosing the areas where you have disabilities
+                            </h2>
+                            <p className="text-sm mb-8">
+                                Choose the specific body part affected by your disability and
+                                indicate the percentage of impairment from 0% to 100%.
+                            </p>
+                            <div className="grid grid-cols-4 gap-4 mb-8">
+                                <div className="col-span-1">
+                                    <div ref={selectRef}>
+                                        <Select value={selectedValue} onValueChange={(event) => setSelectedValue(event)}>
+                                            <SelectTrigger>
+                                                {selectedValue}
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Head" onClick={() => handleBodyPartClick("Head")}>Head</SelectItem>
+                                                <SelectItem value="Torso" onClick={() => handleBodyPartClick("Torso")}>Torso</SelectItem>
+                                                <SelectItem value="Right Arm" onClick={() => handleBodyPartClick("Right Arm")}>Right Arm</SelectItem>
+                                                <SelectItem value="Left Arm" onClick={() => handleBodyPartClick("Left Arm")}>Left Arm</SelectItem>
+                                                <SelectItem value="Right Leg" onClick={() => handleBodyPartClick("Right Leg")}>Right Leg</SelectItem>
+                                                <SelectItem value="Left Leg" onClick={() => handleBodyPartClick("Left Leg")}>Left Leg</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <div className="col-span-3 flex flex-wrap gap-4">
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(10)}
+                                    >
+                                        10%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(20)}
+                                    >
+                                        20%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(30)}
+                                    >
+                                        30%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(40)}
+                                    >
+                                        40%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(50)}
+                                    >
+                                        50%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(60)}
+                                    >
+                                        60%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(70)}
+                                    >
+                                        70%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(80)}
+                                    >
+                                        80%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(90)}
+                                    >
+                                        90%
+                                    </Button>
+                                    <Button
+                                        className="w-1/5"
+                                        onClick={() => handleButtonClick(100)}
+                                    >
+                                        100%
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-span-1 flex justify-center items-center">
+                            <Body
+                                handleBodyPartClick={handleBodyPartClick}
+                                selectedValue={selectedValue}
+                                setSelectedValue={setSelectedValue}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-xs font-semibold">Ratings</span>
+                        <Badges />
+                        <span className="text-xs font-semibold">Step 1</span>
+                    </div>
+                </div>
+                <div className="p-8 border border-gray-200 rounded-lg dark:border-gray-800">
+                    <div className="mb-8 flex justify-center items-center"></div>
+                    <div className="text-center">
+                        <h3 className="text-lg font-semibold mb-2">
+                            Total Disability Rating
+                        </h3>
+                        <p className="text-4xl font-bold mb-4">{disabilityPercentage}%</p>
+                        <h3 className="text-lg font-semibold mb-2">
+                            Total Monthly Compensation
+                        </h3>
+                        <p className="text-xl font-bold">$ 0</p>
+                    </div>
+                    <div className="mt-8"></div>
+                </div>
+            </div>
+            <div className="mt-16 mb-8">
+                <h2 className="text-lg font-semibold mb-4">
+                    To complete the assessment, fill out the form to proceed with
+                    generating your quote.
+                </h2>
+                <p className="text-sm mb-8">
+                    Are you sure your VA rating is fair? Let us uncover your potential
+                    rating eligibility.
+                </p>
+                <div className="grid grid-cols-2 gap-8">
+                    <div className="border-b pb-4">
+                        <h3 className="text-sm font-semibold mb-2">
+                            Combined Disability Percentage:
+                        </h3>
+                        <p className="text-lg font-bold">{disabilityPercentage}</p>
+                    </div>
+                    <div className="border-b pb-4">
+                        <h3 className="text-sm font-semibold mb-2">
+                            Current Disability Rating:
+                        </h3>
+                        <p className="text-lg font-bold">0%</p>
+                    </div>
+                    <div className="border-b pb-4">
+                        <h3 className="text-sm font-semibold mb-2">
+                            Monthly Payment Amount:
+                        </h3>
+                        <p className="text-lg font-bold">$0</p>
+                    </div>
+                    <div className="border-b pb-4">
+                        <Select>
+                            <SelectTrigger id="children-under-18">
+                                <SelectValue placeholder="How many dependent children do you have who are under the age of 18?" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                                <SelectItem value="0">None</SelectItem>
+                                <SelectItem value="1">1</SelectItem>
+                                <SelectItem value="2">2</SelectItem>
+                                <SelectItem value="3">3</SelectItem>
+                                <SelectItem value="4">4</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="border-b pb-4">
+                        <Select>
+                            <SelectTrigger id="children-18-24">
+                                <SelectValue placeholder="How many dependent children do you have who are between the ages of 18 and 24?" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                                <SelectItem value="0">None</SelectItem>
+                                <SelectItem value="1">1</SelectItem>
+                                <SelectItem value="2">2</SelectItem>
+                                <SelectItem value="3">3</SelectItem>
+                                <SelectItem value="4">4</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="border-b pb-4">
+                        <Select>
+                            <SelectTrigger id="marital-status">
+                                <SelectValue placeholder="What is your marital status?" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                                <SelectItem value="single">Single</SelectItem>
+                                <SelectItem value="married">Married</SelectItem>
+                                <SelectItem value="divorced">Divorced</SelectItem>
+                                <SelectItem value="widowed">Widowed</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="border-b pb-4">
+                        <Select>
+                            <SelectTrigger id="dependent-parents">
+                                <SelectValue placeholder="How many dependent parents do you have?" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                                <SelectItem value="0">None</SelectItem>
+                                <SelectItem value="1">1</SelectItem>
+                                <SelectItem value="2">2</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            </div>
+            <div className="text-center">
+                <Button>Submit</Button>
+            </div>
+        </div>
+    );
 }
 
 export default Vacalculator;
