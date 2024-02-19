@@ -21,23 +21,20 @@ const Vacalculator = () => {
     const [selectedBodyPart, setSelectedBodyPart] = useState("");
     const selectRef = useRef<HTMLDivElement>(null);
     const [selectedValue, setSelectedValue] = useState<string>("Select Body Part");
+    const [disabilityPercentages, setDisabilityPercentages] = useState<{ [key: string]: number }>({});
 
-    const handleButtonClick = (increment: number) => {
-        const newPercentage = disabilityPercentage + increment;
-        const clampedPercentage = Math.min(Math.max(newPercentage, 0), 100);
-        setDisabilityPercentage(clampedPercentage);
-    };
 
-    const handleSelectChange: FormEventHandler<HTMLButtonElement> = (event) => {
-        const selectedValue = event.currentTarget.value;
-        setSelectedBodyPart(selectedValue);
-        setSelectedValue(selectedValue);
+    const handleButtonClick = (part: string, increment: number) => {
+        setDisabilityPercentages(prevState => ({
+            ...prevState,
+            [part]: (prevState[part] || 0) + increment
+        }));
     };
 
     const handleBodyPartClick = (part: string) => {
         setSelectedBodyPart(part); // Update the selected body part
         setSelectedValue(part); // Update the selected value for the dropdown
-		console.log(selectedValue)
+        console.log(selectedValue)
     };
 
     return (
@@ -64,6 +61,7 @@ const Vacalculator = () => {
                                                 {selectedValue}
                                             </SelectTrigger>
                                             <SelectContent>
+                                                <SelectItem value="Others" onClick={() => handleBodyPartClick("Others")}>Others</SelectItem>
                                                 <SelectItem value="Head" onClick={() => handleBodyPartClick("Head")}>Head</SelectItem>
                                                 <SelectItem value="Torso" onClick={() => handleBodyPartClick("Torso")}>Torso</SelectItem>
                                                 <SelectItem value="Right Arm" onClick={() => handleBodyPartClick("Right Arm")}>Right Arm</SelectItem>
@@ -77,61 +75,61 @@ const Vacalculator = () => {
                                 <div className="col-span-3 flex flex-wrap gap-4">
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(10)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 10)}
                                     >
                                         10%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(20)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 20)}
                                     >
                                         20%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(30)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 30)}
                                     >
                                         30%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(40)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 40)}
                                     >
                                         40%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(50)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 50)}
                                     >
                                         50%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(60)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 60)}
                                     >
                                         60%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(70)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 70)}
                                     >
                                         70%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(80)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 80)}
                                     >
                                         80%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(90)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 90)}
                                     >
                                         90%
                                     </Button>
                                     <Button
                                         className="w-1/5"
-                                        onClick={() => handleButtonClick(100)}
+                                        onClick={() => handleButtonClick(selectedBodyPart, 100)}
                                     >
                                         100%
                                     </Button>
@@ -148,7 +146,11 @@ const Vacalculator = () => {
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-xs font-semibold">Ratings</span>
-                        <Badges />
+                        <Badges
+                            disabilityPercentages={disabilityPercentages}
+                            handleButtonClick={handleButtonClick}
+                            selectedBodyPart={selectedBodyPart} // Make sure to pass the selectedBodyPart prop
+                        />
                         <span className="text-xs font-semibold">Step 1</span>
                     </div>
                 </div>
@@ -158,7 +160,9 @@ const Vacalculator = () => {
                         <h3 className="text-lg font-semibold mb-2">
                             Total Disability Rating
                         </h3>
-                        <p className="text-4xl font-bold mb-4">{disabilityPercentage}%</p>
+                        <p className="text-4xl font-bold mb-4">
+                            {Object.values(disabilityPercentages).reduce((acc, curr) => acc + curr, 0)}%
+                        </p>
                         <h3 className="text-lg font-semibold mb-2">
                             Total Monthly Compensation
                         </h3>
@@ -206,6 +210,12 @@ const Vacalculator = () => {
                                 <SelectItem value="2">2</SelectItem>
                                 <SelectItem value="3">3</SelectItem>
                                 <SelectItem value="4">4</SelectItem>
+                                <SelectItem value="5">5</SelectItem>
+                                <SelectItem value="6">6</SelectItem>
+                                <SelectItem value="7">7</SelectItem>
+                                <SelectItem value="8">8</SelectItem>
+                                <SelectItem value="9">9</SelectItem>
+                                <SelectItem value="10">10</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -220,6 +230,12 @@ const Vacalculator = () => {
                                 <SelectItem value="2">2</SelectItem>
                                 <SelectItem value="3">3</SelectItem>
                                 <SelectItem value="4">4</SelectItem>
+                                <SelectItem value="5">5</SelectItem>
+                                <SelectItem value="6">6</SelectItem>
+                                <SelectItem value="7">7</SelectItem>
+                                <SelectItem value="8">8</SelectItem>
+                                <SelectItem value="9">9</SelectItem>
+                                <SelectItem value="10">10</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
