@@ -16,40 +16,111 @@ import {
   Select,
 } from "@/components/ui/select";
 
+export interface Rating {
+  rate: number,
+  part: string,
+  id: number,
+}
+interface BodyInt {
+  [key: string]: number[];
+  head: number[],
+  torso: number[],
+  left_arm: number[],
+  right_arm: number[],
+  left_leg: number[],
+  right_leg: number[],
+  other: number[],
+}
+
 const Vacalculator = () => {
   const [disabilityPercentage, setDisabilityPercentage] = useState(0);
   const [selectedValue, setSelectedValue] = useState<string>("Others");
-  const selectRef = useRef<HTMLDivElement>(null);
-  const [disabilityPercentages, setDisabilityPercentages] = useState<{
-    [key: string]: number;
-  }>({});
 
-  const handleButtonClick = (part: string, increment: number) => {
-    setDisabilityPercentages((prevState) => ({
-      ...prevState,
-      [part]: (prevState[part] || 0) + increment,
-    }));
+  const [ratings, setRatings] = useState<Array<Rating>>([]);
+
+
+  const [disabilityRating, setDisabilityRating] = useState({
+    bilateralFactor: undefined,
+    calculatedRating: undefined,
+    disabilityRating: undefined,
+  });
+
+  let nextId = useRef(1);
+
+  // function to add new ratings
+  const handleButtonClick = (part: string, rating: number) => {
+    setRatings([...ratings, { rate: rating, part: part, id: nextId.current }]);
+    nextId.current++;
   };
 
-  const handleBadgeDelete = (part: string) => {
-    // Remove the badge and its associated percentage from the state
-    const updatedPercentages = { ...disabilityPercentages };
-    delete updatedPercentages[part];
-    setDisabilityPercentages(updatedPercentages);
+  // Remove rating
+  const handleBadgeDelete = (id: number) => {
+    let newRates = ratings.filter((item) => item.id != id);
+    setRatings(newRates);
   };
 
   const handleBodyPartClick = (part: string) => {
     setSelectedValue(part); // Update the selected value for both body part and dropdown
-    console.log(selectedValue);
+  };
+
+  const recalculate = () => {
+    let body: BodyInt = {
+      head: [],
+      torso: [],
+      left_arm: [],
+      right_arm: [],
+      left_leg: [],
+      right_leg: [],
+      other: [],
+    };
+    ratings.forEach((elem) => {
+      let thePart;
+      /**
+       * use json
+       */
+      switch (elem.part) {
+        case "Head":
+          thePart = "head";
+          break;
+        case "Torso":
+          thePart = "torso";
+          break;
+        case "Left Arm":
+          thePart = "left_arm";
+          break;
+        case "Right Arm":
+          thePart = "right_arm";
+          break;
+        case "Left Leg":
+          thePart = "left_leg";
+          break;
+        case "Right Leg":
+          thePart = "right_leg";
+          break;
+        default:
+          thePart = "other";
+      }
+
+      body[thePart].push(elem.rate);
+    });
+
+    fetch("https://my-hono-app.tom31aguila.workers.dev/api/calculator/disability-rating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        setDisabilityRating(res);
+      })
+    return body;
   };
 
   useEffect(() => {
-    const totalPercentage = Object.values(disabilityPercentages).reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
-    setDisabilityPercentage(totalPercentage > 100 ? 100 : totalPercentage);
-  }, [disabilityPercentages]);
+    recalculate();
+  }, [ratings]);
 
   return (
     <div className="bg-white p-8">
@@ -69,58 +140,56 @@ const Vacalculator = () => {
               </p>
               <div className="grid grid-cols-4 gap-4 mb-8">
                 <div className="col-span-1">
-                  <div ref={selectRef}>
-                    <Select
-                      value={selectedValue}
-                      onValueChange={(event) => setSelectedValue(event)}
-                    >
-                      <SelectTrigger>{selectedValue}</SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          value="Others"
-                          onClick={() => handleBodyPartClick("Others")}
-                        >
-                          Others
-                        </SelectItem>
-                        <SelectItem
-                          value="Head"
-                          onClick={() => handleBodyPartClick("Head")}
-                        >
-                          Head
-                        </SelectItem>
-                        <SelectItem
-                          value="Torso"
-                          onClick={() => handleBodyPartClick("Torso")}
-                        >
-                          Torso
-                        </SelectItem>
-                        <SelectItem
-                          value="Right Arm"
-                          onClick={() => handleBodyPartClick("Right Arm")}
-                        >
-                          Right Arm
-                        </SelectItem>
-                        <SelectItem
-                          value="Left Arm"
-                          onClick={() => handleBodyPartClick("Left Arm")}
-                        >
-                          Left Arm
-                        </SelectItem>
-                        <SelectItem
-                          value="Right Leg"
-                          onClick={() => handleBodyPartClick("Right Leg")}
-                        >
-                          Right Leg
-                        </SelectItem>
-                        <SelectItem
-                          value="Left Leg"
-                          onClick={() => handleBodyPartClick("Left Leg")}
-                        >
-                          Left Leg
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Select
+                    value={selectedValue}
+                    onValueChange={(event) => setSelectedValue(event)}
+                  >
+                    <SelectTrigger>{selectedValue}</SelectTrigger>
+                    <SelectContent>
+                      <SelectItem
+                        value="Others"
+                        onClick={() => handleBodyPartClick("Others")}
+                      >
+                        Others
+                      </SelectItem>
+                      <SelectItem
+                        value="Head"
+                        onClick={() => handleBodyPartClick("Head")}
+                      >
+                        Head
+                      </SelectItem>
+                      <SelectItem
+                        value="Torso"
+                        onClick={() => handleBodyPartClick("Torso")}
+                      >
+                        Torso
+                      </SelectItem>
+                      <SelectItem
+                        value="Right Arm"
+                        onClick={() => handleBodyPartClick("Right Arm")}
+                      >
+                        Right Arm
+                      </SelectItem>
+                      <SelectItem
+                        value="Left Arm"
+                        onClick={() => handleBodyPartClick("Left Arm")}
+                      >
+                        Left Arm
+                      </SelectItem>
+                      <SelectItem
+                        value="Right Leg"
+                        onClick={() => handleBodyPartClick("Right Leg")}
+                      >
+                        Right Leg
+                      </SelectItem>
+                      <SelectItem
+                        value="Left Leg"
+                        onClick={() => handleBodyPartClick("Left Leg")}
+                      >
+                        Left Leg
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="col-span-3 flex flex-wrap gap-4">
                   <Button
@@ -197,7 +266,7 @@ const Vacalculator = () => {
           <div className="flex justify-between items-center">
             <span className="text-xs font-semibold">Ratings</span>
             <Badges
-              disabilityPercentages={disabilityPercentages}
+              disabilityPercentages={ratings}
               handleBadgeDelete={handleBadgeDelete} // Pass the handleBadgeDelete function instead
             />
             <span className="text-xs font-semibold">Step 1</span>
@@ -209,7 +278,11 @@ const Vacalculator = () => {
             <h3 className="text-lg font-semibold mb-2">
               Total Disability Rating
             </h3>
-            <p className="text-4xl font-bold mb-4">{disabilityPercentage}%</p>
+            <p className="text-4xl font-bold mb-4">
+              {disabilityRating.calculatedRating
+                ? disabilityRating.disabilityRating + ""
+                : "0"}%
+            </p>
             <h3 className="text-lg font-semibold mb-2">
               Total Monthly Compensation
             </h3>
