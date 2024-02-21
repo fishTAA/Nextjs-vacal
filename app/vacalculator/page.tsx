@@ -17,13 +17,92 @@ import {
 } from "@/components/ui/select";
 
 const Vacalculator = () => {
+  const endpoint = process.env.NEXT_PUBLIC_DB_URI || "http://127.0.0.1:8787";
   const [disabilityPercentage, setDisabilityPercentage] = useState(0);
   const [selectedValue, setSelectedValue] = useState<string>("Others");
   const selectRef = useRef<HTMLDivElement>(null);
   const [disabilityPercentages, setDisabilityPercentages] = useState<{
     [key: string]: number;
   }>({});
+  //calculation variables
+  const [childrenUnder18, setChildrenUnder18] = useState(0);
+  const [childrenAbove18, setChildrenAbove18] = useState(0);
+  const [hasSpouse, setMaritalStatus] = useState(false);
+  const [aidAndAttendance, setAidAndAttendance] = useState(false);
+  const [dependentParents, setDependentParents] = useState(0);
+  const [disabilityRating, setDisabilityRating] = useState({
+    bilateralFactor: undefined,
+    calculatedRating: undefined,
+    disabilityRating: undefined,
+  });
 
+  const [monthly, setMonthly] = useState({
+    monthly: 0,
+  });
+  let x = 0;
+  const under18Clicked = (under18: string) => {
+    setChildrenUnder18(Number(under18));
+  };
+
+  const above18Clicked = (above18: string) => {
+    setChildrenAbove18(Number(above18));
+  };
+
+  const MaritalStatusClicked = (withSpouse: string) => {
+    let isMarried = withSpouse === "married";
+    setMaritalStatus(isMarried);
+    if (!isMarried) {
+      setAidAndAttendance(false);
+    }
+  };
+
+  const aidAndAttendanceClicked = (hasAidAttendance: string) => {
+    let aidAttendance = hasAidAttendance === "Yes";
+    setAidAndAttendance(aidAttendance);
+  };
+
+  const dependentParentsClicked = (dependentParents: string) => {
+    setDependentParents(Number(dependentParents));
+  };
+
+  const Dependency = async () => {
+    let data = {
+      disabilityRating: disabilityRating.calculatedRating
+        ? disabilityRating.disabilityRating + ""
+        : 0,
+      childrenUnder18: childrenUnder18,
+      childrenAbove18: childrenAbove18,
+      hasSpouse: hasSpouse,
+      aidAndAttendance: aidAndAttendance,
+      dependentParents: dependentParents,
+    };
+    console.log("data", data);
+    fetch(`${endpoint}/api/calculator/dependency`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        console.log("res", res);
+        setMonthly(res);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    console.log("updating");
+    Dependency();
+  }, [
+    disabilityRating,
+    childrenUnder18,
+    childrenAbove18,
+    hasSpouse,
+    aidAndAttendance,
+    dependentParents,
+  ]);
+  //
   const handleButtonClick = (part: string, increment: number) => {
     setDisabilityPercentages((prevState) => ({
       ...prevState,
@@ -40,7 +119,7 @@ const Vacalculator = () => {
 
   const handleBodyPartClick = (part: string) => {
     setSelectedValue(part); // Update the selected value for both body part and dropdown
-    console.log(selectedValue);
+    console.log(part);
   };
 
   useEffect(() => {
@@ -213,7 +292,7 @@ const Vacalculator = () => {
             <h3 className="text-lg font-semibold mb-2">
               Total Monthly Compensation
             </h3>
-            <p className="text-xl font-bold">$ 0</p>
+            <p className="text-xl font-bold">$ {monthly.monthly}</p>
           </div>
           <div className="mt-8"></div>
         </div>
@@ -247,7 +326,11 @@ const Vacalculator = () => {
             <p className="text-lg font-bold">$0</p>
           </div>
           <div className="border-b pb-4">
-            <Select>
+            <Select
+              onValueChange={(e) => {
+                under18Clicked(e);
+              }}
+            >
               <SelectTrigger id="children-under-18">
                 <SelectValue placeholder="How many dependent children do you have who are under the age of 18?" />
               </SelectTrigger>
@@ -267,7 +350,11 @@ const Vacalculator = () => {
             </Select>
           </div>
           <div className="border-b pb-4">
-            <Select>
+            <Select
+              onValueChange={(e) => {
+                above18Clicked(e);
+              }}
+            >
               <SelectTrigger id="children-18-24">
                 <SelectValue placeholder="How many dependent children do you have who are between the ages of 18 and 24?" />
               </SelectTrigger>
@@ -287,20 +374,46 @@ const Vacalculator = () => {
             </Select>
           </div>
           <div className="border-b pb-4">
-            <Select>
+            <Select
+              onValueChange={(e) => {
+                MaritalStatusClicked(e);
+              }}
+            >
               <SelectTrigger id="marital-status">
                 <SelectValue placeholder="What is your marital status?" />
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectItem value="single">Single</SelectItem>
                 <SelectItem value="married">Married</SelectItem>
-                <SelectItem value="divorced">Divorced</SelectItem>
-                <SelectItem value="widowed">Widowed</SelectItem>
+                {/* <SelectItem value="divorced">Divorced</SelectItem>
+                <SelectItem value="widowed">Widowed</SelectItem> */}
               </SelectContent>
             </Select>
           </div>
+          {hasSpouse && (
+            <div className="border-b pb-4">
+              <Select
+                onValueChange={(e) => {
+                  aidAndAttendanceClicked(e);
+                }}
+              >
+                <SelectTrigger id="receive Aid and Attendance(A/A)?">
+                  <SelectValue placeholder="Do you or your spouse receive Aid and Attendance(A/A)??" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="0">None</SelectItem>
+                  <SelectItem value="No">No</SelectItem>
+                  <SelectItem value="Yes">Yes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="border-b pb-4">
-            <Select>
+            <Select
+              onValueChange={(e) => {
+                dependentParentsClicked(e);
+              }}
+            >
               <SelectTrigger id="dependent-parents">
                 <SelectValue placeholder="How many dependent parents do you have?" />
               </SelectTrigger>
