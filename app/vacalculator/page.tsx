@@ -175,7 +175,7 @@ const Vacalculator = () => {
       body[thePart].push(elem.rate);
     });
 
-    fetch("https://my-hono-app.tom31aguila.workers.dev/api/calculator/disability-rating", {
+    fetch(`${endpoint}/api/calculator/disability-rating`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -350,9 +350,7 @@ const Vacalculator = () => {
               Total Disability Rating
             </h3>
             <p className="text-4xl font-bold mb-4">
-              {disabilityRating.calculatedRating
-                ? disabilityRating.disabilityRating + ""
-                : "0"}%
+              {disabilityRating.disabilityRating}%
             </p>
             <h3 className="text-lg font-semibold mb-2">
               Total Monthly Compensation
@@ -376,19 +374,19 @@ const Vacalculator = () => {
             <h3 className="text-sm font-semibold mb-2">
               Combined Disability Percentage:
             </h3>
-            <p className="text-lg font-bold">{disabilityRating.disabilityRating}</p>
+            <p className="text-lg font-bold">{disabilityRating.calculatedRating}%</p>
           </div>
           <div className="border-b pb-4">
             <h3 className="text-sm font-semibold mb-2">
               Current Disability Rating:
             </h3>
-            <p className="text-lg font-bold">0%</p>
+            <p className="text-lg font-bold">{disabilityRating.disabilityRating}%</p>
           </div>
           <div className="border-b pb-4">
             <h3 className="text-sm font-semibold mb-2">
               Monthly Payment Amount:
             </h3>
-            <p className="text-lg font-bold">$0</p>
+            <p className="text-lg font-bold">${monthly.monthly}</p>
           </div>
           <div className="border-b pb-4">
             <Select
