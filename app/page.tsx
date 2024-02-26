@@ -17,19 +17,19 @@ import {
 } from "@/components/ui/select";
 
 export interface Rating {
-  rate: number,
-  part: string,
-  id: number,
+  rate: number;
+  part: string;
+  id: number;
 }
 interface BodyInt {
   [key: string]: number[];
-  head: number[],
-  torso: number[],
-  left_arm: number[],
-  right_arm: number[],
-  left_leg: number[],
-  right_leg: number[],
-  other: number[],
+  head: number[];
+  torso: number[];
+  left_arm: number[];
+  right_arm: number[];
+  left_leg: number[];
+  right_leg: number[];
+  other: number[];
 }
 
 const Vacalculator = () => {
@@ -122,7 +122,7 @@ const Vacalculator = () => {
     setRatings([...ratings, { rate: rating, part: part, id: nextId.current }]);
     nextId.current++;
   };
- 
+
   // Remove rating
   const handleBadgeDelete = (id: number) => {
     let newRates = ratings.filter((item) => item.id != id);
@@ -131,10 +131,10 @@ const Vacalculator = () => {
 
   const handleBodyPartClick = (part: string) => {
     setSelectedValue(part); // Update the selected value for both body part and dropdown
-
   };
 
   const recalculate = () => {
+    setMonthly({ monthly: 0 });
     let body: BodyInt = {
       head: [],
       torso: [],
@@ -174,7 +174,6 @@ const Vacalculator = () => {
 
       body[thePart].push(elem.rate);
     });
-
     fetch(`${endpoint}/api/calculator/disability-rating`, {
       method: "POST",
       headers: {
@@ -185,7 +184,7 @@ const Vacalculator = () => {
       .then((r) => r.json())
       .then((res) => {
         setDisabilityRating(res);
-      })
+      });
     return body;
   };
 
@@ -374,13 +373,17 @@ const Vacalculator = () => {
             <h3 className="text-sm font-semibold mb-2">
               Combined Disability Percentage:
             </h3>
-            <p className="text-lg font-bold">{disabilityRating.calculatedRating}%</p>
+            <p className="text-lg font-bold">
+              {disabilityRating.calculatedRating}%
+            </p>
           </div>
           <div className="border-b pb-4">
             <h3 className="text-sm font-semibold mb-2">
               Current Disability Rating:
             </h3>
-            <p className="text-lg font-bold">{disabilityRating.disabilityRating}%</p>
+            <p className="text-lg font-bold">
+              {disabilityRating.disabilityRating}%
+            </p>
           </div>
           <div className="border-b pb-4">
             <h3 className="text-sm font-semibold mb-2">
