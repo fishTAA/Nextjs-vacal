@@ -1,5 +1,5 @@
 import React from "react";
-import { Rating } from "@/app/vacalculator/page";
+import { Rating } from "@/app/page";
 interface BadgesProps {
   disabilityPercentages: Rating[];
   handleBadgeDelete: (id: number) => void; // Function to handle badge deletion
