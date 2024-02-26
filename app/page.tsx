@@ -359,143 +359,147 @@ const Vacalculator = () => {
           <div className="mt-8"></div>
         </div>
       </div>
+
+
+
+      {/* <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md"> */}
       <div className="mt-16 mb-8">
-        <h2 className="text-lg font-semibold mb-4">
-          To complete the assessment, fill out the form to proceed with
-          generating your quote.
-        </h2>
-        <p className="text-sm mb-8">
-          Are you sure your VA rating is fair? Let us uncover your potential
-          rating eligibility.
-        </p>
-        <div className="grid grid-cols-2 gap-8">
-          <div className="border-b pb-4">
-            <h3 className="text-sm font-semibold mb-2">
-              Combined Disability Percentage:
-            </h3>
-            <p className="text-lg font-bold">
-              {disabilityRating.calculatedRating}%
-            </p>
-          </div>
-          <div className="border-b pb-4">
-            <h3 className="text-sm font-semibold mb-2">
-              Current Disability Rating:
-            </h3>
-            <p className="text-lg font-bold">
-              {disabilityRating.disabilityRating}%
-            </p>
-          </div>
-          <div className="border-b pb-4">
-            <h3 className="text-sm font-semibold mb-2">
-              Monthly Payment Amount:
-            </h3>
-            <p className="text-lg font-bold">${monthly.monthly}</p>
-          </div>
-          <div className="border-b pb-4">
-            <Select
-              onValueChange={(e) => {
-                under18Clicked(e);
-              }}
-            >
-              <SelectTrigger id="children-under-18">
-                <SelectValue placeholder="How many dependent children do you have who are under the age of 18?" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectItem value="0">None</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="6">6</SelectItem>
-                <SelectItem value="7">7</SelectItem>
-                <SelectItem value="8">8</SelectItem>
-                <SelectItem value="9">9</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="border-b pb-4">
-            <Select
-              onValueChange={(e) => {
-                above18Clicked(e);
-              }}
-            >
-              <SelectTrigger id="children-18-24">
-                <SelectValue placeholder="How many dependent children do you have who are between the ages of 18 and 24?" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectItem value="0">None</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="6">6</SelectItem>
-                <SelectItem value="7">7</SelectItem>
-                <SelectItem value="8">8</SelectItem>
-                <SelectItem value="9">9</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="border-b pb-4">
-            <Select
-              onValueChange={(e) => {
-                MaritalStatusClicked(e);
-              }}
-            >
-              <SelectTrigger id="marital-status">
-                <SelectValue placeholder="What is your marital status?" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectItem value="single">Single</SelectItem>
-                <SelectItem value="married">Married</SelectItem>
-                {/* <SelectItem value="divorced">Divorced</SelectItem>
-                <SelectItem value="widowed">Widowed</SelectItem> */}
-              </SelectContent>
-            </Select>
-          </div>
-          {hasSpouse && (
-            <div className="border-b pb-4">
+      <h1 className="text-2xl font-bold mb-4">
+        To complete the assessment, fill out the form to proceed with generating your quote.
+      </h1>
+      <p className="mb-6">Are you sure your VA rating is fair? Let us uncover your potential rating eligibility.</p>
+      <div className="grid grid-cols-2 gap-8 mb-6">
+        <div>
+          <div className="font-semibold mb-2">Combined Disability Percentage:</div>
+          <div className="text-3xl font-bold mb-4"> {disabilityRating.calculatedRating}%</div>
+        </div>
+        <div>
+          <div className="font-semibold mb-2">Current Disability Rating:</div>
+          <div className="text-3xl font-bold">{disabilityRating.disabilityRating}%</div>
+        </div>
+      </div>
+      <div className="font-semibold mb-2">Monthly Payment Amount:</div>
+      <div className="text-3xl font-bold mb-6">${monthly.monthly}</div>
+      <form className="grid grid-cols-2 gap-8">
+        <div className="flex flex-col">
+          <label className="mb-2" htmlFor="children-under-18">
+            How many dependent children do you have who are under the age of 18?
+          </label>
+          <Select
+           onValueChange={(e) => {
+            under18Clicked(e);
+          }}>
+            <SelectTrigger id="children-under-18">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="0">0</SelectItem>
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="2">2</SelectItem>
+              <SelectItem value="3">3</SelectItem>
+              <SelectItem value="4">4</SelectItem>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="6">6</SelectItem>
+              <SelectItem value="7">7</SelectItem>
+              <SelectItem value="8">8</SelectItem>
+              <SelectItem value="9">9</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col">
+          <label className="mb-2" htmlFor="children-18-24">
+            How many dependent children do you have who are between the ages of 18 and 24?
+          </label>
+          <Select
+           onValueChange={(e) => {
+            above18Clicked(e);
+          }}>
+            <SelectTrigger id="children-18-24">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+            <SelectItem value="0">0</SelectItem>
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="2">2</SelectItem>
+              <SelectItem value="3">3</SelectItem>
+              <SelectItem value="4">4</SelectItem>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="6">6</SelectItem>
+              <SelectItem value="7">7</SelectItem>
+              <SelectItem value="8">8</SelectItem>
+              <SelectItem value="9">9</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col">
+          <label className="mb-2" htmlFor="marital-status">
+            What is your marital status?
+          </label>
+          <Select
+           onValueChange={(e) => {
+            MaritalStatusClicked(e);
+          }}>
+            <SelectTrigger id="marital-status">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="single">Single</SelectItem>
+              <SelectItem value="married">Married</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      
+        <div className="flex flex-col">
+          <label className="mb-2" htmlFor="dependent-parents">
+            How many dependent parents do you have?
+          </label>
+          <Select
+           onValueChange={(e) => {
+            dependentParentsClicked(e);
+          }}>
+            <SelectTrigger id="dependent-parents">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="0">None</SelectItem>
+              <SelectItem value="1">1</SelectItem>
+              <SelectItem value="2">2</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {hasSpouse && (
+            <div className="flex flex-col">
+               <label className="mb-2" htmlFor="dependent-parents">
+               Do you or your spouse receive Aid and Attendance(A/A)?
+              </label>
               <Select
                 onValueChange={(e) => {
                   aidAndAttendanceClicked(e);
                 }}
               >
                 <SelectTrigger id="receive Aid and Attendance(A/A)?">
-                  <SelectValue placeholder="Do you or your spouse receive Aid and Attendance(A/A)??" />
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                  <SelectItem value="0">None</SelectItem>
                   <SelectItem value="No">No</SelectItem>
                   <SelectItem value="Yes">Yes</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+            
           )}
-          <div className="border-b pb-4">
-            <Select
-              onValueChange={(e) => {
-                dependentParentsClicked(e);
-              }}
-            >
-              <SelectTrigger id="dependent-parents">
-                <SelectValue placeholder="How many dependent parents do you have?" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectItem value="0">None</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-      <div className="text-center">
+      </form>
+      {/* <div className="mt-6">
         <Button>Submit</Button>
-      </div>
+      </div> */}
+      {/* Submit Button included in the AI generation */}
     </div>
+
+    </div>
+
+    
   );
 };
 
